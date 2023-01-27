@@ -2,7 +2,7 @@
   <div class="card settings-overlay border-0">
     <div class="card-body settings__item">
 
-      <label class="form-label">{{ $t("theme") }}</label>
+      <div class="card-title">{{ $t("theme") }}</div>
 
       <Dropdown v-model="theme" :options="themeOptions"></Dropdown>
 
@@ -34,10 +34,6 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .settings-overlay {
-  position: absolute;
-  top: var(--bs-card-spacer-x);
-  right: var(--bs-card-spacer-x);
-  z-index: 1;
-  width: 200px;
+
 }
 </style>

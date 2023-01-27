@@ -1,12 +1,14 @@
 <template>
-  <div class="card countries-list-overlay">
-    <div class="card-title">Countries List</div>
+  <div class="card countries-list-overlay border-0 overflow-hidden">
+    <div class="card-body">
+      <div class="card-title mb-0">{{ $t('countries-list') }}</div>
+    </div>
 
-    <div class="list-group overflow-auto">
+    <div class="list-group overflow-auto list-group-flush">
       <div class="list-group-item d-flex"
            v-for="(country, i) in orderedCountries" :key="country.country_or_territory">
-        <span class="flex-fill">{{ getItemText(country, i + 1) }}</span>
         <span class="ms-2">{{ getItemValue(country) }}</span>
+        <span class="flex-fill" style="direction: ltr">{{ getItemText(country, i + 1) }}</span>
       </div>
     </div>
   </div>
@@ -57,12 +59,8 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .countries-list-overlay {
-  position: absolute;
-  top: 200px;
-  left: 10px;
-  height: 50vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 100;
-  overflow-y: scroll;
+  .list-group {
+    direction: rtl;
+  }
 }
 </style>

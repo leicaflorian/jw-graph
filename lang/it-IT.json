@@ -1,6 +1,7 @@
 {
   "category": "Categoria",
   "theme": "Tema",
+  "countries-list": "Lista paesi",
   "categories": {
     "country_or_territory": "Paese o territorio",
     "population": "Popolazione",

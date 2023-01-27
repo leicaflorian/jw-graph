@@ -2,7 +2,7 @@
   <div class="card categories-overlay border-0" data-bs-theme="dark">
     <div class="card-body">
 
-      <label class="form-label">{{ $t('category') }}</label>
+      <div class="card-title">{{ $t('category') }}</div>
 
       <Dropdown v-model="active" :options="categories"></Dropdown>
     </div>
@@ -42,10 +42,6 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .categories-overlay {
-  position: absolute;
-  top: var(--bs-card-spacer-x);
-  left: var(--bs-card-spacer-x);
-  z-index: 1;
-  width: 200px;
+
 }
 </style>
