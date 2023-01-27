@@ -12,15 +12,18 @@
   </div>
 
   <Timeline></Timeline>
+
+  <CountryDetailsModal></CountryDetailsModal>
 </template>
 
 <script lang="ts">
 import CountriesList from '~/components/CountriesList.vue'
 import { onMounted } from '@vue/runtime-core'
+import CountryDetailsModal from '~/components/CountryDetailsModal.vue'
 
 export default defineComponent({
   name: 'Index',
-  components: { CountriesList },
+  components: { CountryDetailsModal, CountriesList },
   setup (props) {
 
     onMounted(async () => {

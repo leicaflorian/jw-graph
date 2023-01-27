@@ -71,6 +71,18 @@ export default defineComponent({
       globe.value.globeImageUrl(`/earth-${mainStore.settingsTheme}.jpg`)
     })
 
+    watch(() => mainStore.activeCountryData, (value) => {
+      if (value) {
+        // Center the map on the selected country.
+        // TODO:: higlhight the country on the map or show a label
+        globe.value.pointOfView({
+          lat: +mainStore.activeCountryData.latitude,
+          lng: +mainStore.activeCountryData.longitude,
+          altitude: 1
+        }, 1000)
+      }
+    })
+
     onMounted(async () => {
       worldCountries.value = (await queryContent('world_countries').findOne()).body as WorldCountry[]
       mainStore.activeReport = (await queryContent('report_' + mainStore.activeYear).findOne()).body as any

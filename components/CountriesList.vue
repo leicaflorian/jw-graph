@@ -8,7 +8,7 @@
       <div class="list-group-item d-flex"
            v-for="(country, i) in orderedCountries" :key="country.country_or_territory"
            @click="onItemClick(country)">
-        <span class="ms-2">{{ getItemValue(country) }}</span>
+        <span class="ms-2" @click.stop="onValueClick(country)">{{ getItemValue(country) }}</span>
         <span class="flex-fill" style="direction: ltr">{{ getItemText(country, i + 1) }}</span>
       </div>
     </div>
@@ -44,14 +44,19 @@ export default defineComponent({
     }
 
     function onItemClick (country: ReportEntry) {
-      store.activeCountry = country.country_or_territory
+      store.setActiveCountry(country.country_or_territory)
+    }
+
+    function onValueClick () {
+      store.updateCountryDetailsModalState(true)
     }
 
     return {
       orderedCountries,
       getItemText,
       getItemValue,
-      onItemClick
+      onItemClick,
+      onValueClick
     }
   }
 })

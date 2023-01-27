@@ -1,13 +1,13 @@
 <template>
   <div class="timeline-overlay overflow-auto">
     <ul class="list-unstyled d-flex text-light justify-content-center align-items-center">
-      <template v-for="(year, i) in years" :key="year">
+      <template v-for="(year, i) in mainStore.availableYears" :key="year">
         <template v-if="i">
           <li v-for="i in 6" class="list-month"></li>
         </template>
 
         <li class="list-year" :class="{'active': +year.value === +mainStore.activeYear}"
-            @click="mainStore.activeYear = year.value">
+            @click="onYearClick(year.value)">
           <span class="year">
           {{ year.value }}
           </span>
@@ -26,29 +26,16 @@ export default defineComponent({
     const mainStore = useMainStore()
     const timelineDiv = ref()
     const timeline = ref()
-    let availableReports = ref([])
 
-    const years = computed(() => {
-      return availableReports.value.reduce((acc, report) => {
-        const year = report._path.match(/[0-9].+/)[0]
+    function onYearClick(year: number) {
+      mainStore.activeYear = year
+    }
 
-        if (!acc.find((d) => d.value === year)) {
-          acc.push({ value: year })
-        }
-
-        return acc
-      }, [])
-    })
-
-    onMounted(async () => {
-      availableReports.value = await queryContent().where({ _file: /^report_.*/ })
-          .without('body').find()
-    })
 
     return {
       timelineDiv,
-      years,
-      mainStore
+      mainStore,
+      onYearClick
     }
   }
 })
