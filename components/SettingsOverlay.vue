@@ -2,20 +2,21 @@
   <div class="card settings-overlay border-0">
     <div class="card-body settings__item">
 
-      <div class="card-title">{{ $t("theme") }}</div>
+      <div class="card-title">{{ $t('theme') }}</div>
 
-      <Dropdown v-model="theme" :options="themeOptions"></Dropdown>
-
+      <Dropdown v-model="mainStore.settingsTheme" :options="themeOptions"></Dropdown>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 
+import { useMainStore } from '~/stores/main'
+
 export default defineComponent({
   name: 'SettingsOverlay',
   setup (props) {
-    const theme = useSettingsTheme()
+    const mainStore = useMainStore()
     const t = useI18n().t
     const themeOptions = [
       { value: 'blue-marble', text: t('themes.light') },
@@ -25,7 +26,7 @@ export default defineComponent({
     ]
 
     return {
-      theme,
+      mainStore,
       themeOptions
     }
   }

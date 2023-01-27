@@ -4,7 +4,7 @@
 
       <div class="card-title">{{ $t('category') }}</div>
 
-      <Dropdown v-model="active" :options="categories"></Dropdown>
+      <Dropdown v-model="mainStore.activeCategory" :options="categories"></Dropdown>
     </div>
   </div>
 </template>
@@ -12,13 +12,13 @@
 <script lang="ts">
 
 import { useActiveCategory, useActiveYear } from '~/composables/states'
+import { useMainStore } from '~/stores/main'
 
 export default defineComponent({
   name: 'CategoriesOverlay',
   emits: ['update:active'],
   setup (props, { emit }) {
-    const active = useActiveCategory()
-    const year = useActiveYear()
+    const mainStore = useMainStore()
     const t = useI18n().t
 
     const categoriesList = ['population', 'peak_pubs', 'ratio_1_publisher_to', 'av_pubs', 'inc_over', 'no_bptzd', 'av_pio_pubs', 'no_of_congs', 'av_bible_studies', 'memorial_attendance']
@@ -26,14 +26,13 @@ export default defineComponent({
       return categoriesList.map(category => {
         return {
           value: category,
-          text: t('categories.' + category, { year: year.value, lastYear: year.value - 1 })
+          text: t('categories.' + category, { year: mainStore.activeYear, lastYear: mainStore.activeYear - 1 })
         }
       })
     })
 
     return {
-      active,
-      year,
+      mainStore,
       categories
     }
   }

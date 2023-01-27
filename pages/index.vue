@@ -1,8 +1,5 @@
 <template>
-  <GlobeChart :year="+activeYear" :category="activeCategory" theme="night"></GlobeChart>
-
-  <!--  TODO:: Create 2 sidebars, using a offcanvas maybe,
-  so that the view remains as clean as possible-->
+  <GlobeChart></GlobeChart>
 
   <div class="jw-sidebar sidebar-left">
     <CategoriesOverlay class="flex-shrink-0"></CategoriesOverlay>
@@ -18,20 +15,19 @@
 </template>
 
 <script lang="ts">
-import { useActiveCategory, useActiveYear } from '~/composables/states'
 import CountriesList from '~/components/CountriesList.vue'
+import { onMounted } from '@vue/runtime-core'
 
 export default defineComponent({
   name: 'Index',
   components: { CountriesList },
   setup (props) {
-    const activeCategory = useActiveCategory()
-    const activeYear = useActiveYear()
 
-    return {
-      activeCategory,
-      activeYear
-    }
+    onMounted(async () => {
+
+    })
+
+    return {}
   }
 })
 </script>
@@ -55,13 +51,13 @@ export default defineComponent({
   .card {
     --bs-card-bg: transparent;
 
-    .card-title{
+    .card-title {
       margin-bottom: var(--bs-card-spacer-y);
       font-weight: bold;
     }
   }
 
-  .list-group{
+  .list-group {
     --bs-list-group-bg: transparent;
   }
 
@@ -70,7 +66,7 @@ export default defineComponent({
     right: auto;
   }
 
-  &.sidebar-right{
+  &.sidebar-right {
     --jw-bg-rotation: 270deg;
     left: auto;
     right: 0;

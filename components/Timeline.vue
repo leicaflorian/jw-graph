@@ -6,8 +6,8 @@
           <li v-for="i in 6" class="list-month"></li>
         </template>
 
-        <li class="list-year" :class="{'active': +year.value === +activeYear}"
-            @click="activeYear = year.value">
+        <li class="list-year" :class="{'active': +year.value === +mainStore.activeYear}"
+            @click="mainStore.activeYear = year.value">
           <span class="year">
           {{ year.value }}
           </span>
@@ -18,12 +18,12 @@
 </template>
 
 <script lang="ts">
-import { useActiveYear } from '~~/composables/states'
+import { useMainStore } from '~/stores/main'
 
 export default defineComponent({
   name: 'Timeline',
   setup (props) {
-    const activeYear = useActiveYear()
+    const mainStore = useMainStore()
     const timelineDiv = ref()
     const timeline = ref()
     let availableReports = ref([])
@@ -41,14 +41,14 @@ export default defineComponent({
     })
 
     onMounted(async () => {
-      availableReports.value = await queryContent().where({ _path: /report.*/ })
+      availableReports.value = await queryContent().where({ _file: /^report_.*/ })
           .without('body').find()
     })
 
     return {
       timelineDiv,
       years,
-      activeYear
+      mainStore
     }
   }
 })

@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     // https://composition-api.nuxtjs.org
     '@nuxt/content',
     '@nuxtjs/i18n',
+    '@pinia/nuxt',
   ],
   i18n: {
     locales: [
