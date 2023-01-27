@@ -1,59 +1,39 @@
 <template>
   <div class="card categories-overlay border-0" data-bs-theme="dark">
-    <div class="list-group">
-      <div class="list-group-item list-group-item-action" :class="{'active': category.text === active}"
-           v-for="(category, i) in categories" :key="i + category.text"
-           @click="active = category.text">
-        {{ $t(category.text) }}
-      </div>
+    <div class="card-body">
+
+      <label class="form-label">{{ $t('category') }}</label>
+
+      <Dropdown v-model="active" :options="categories"></Dropdown>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 
-import { useActiveCategory } from '~/composables/states'
+import { useActiveCategory, useActiveYear } from '~/composables/states'
 
 export default defineComponent({
   name: 'CategoriesOverlay',
   emits: ['update:active'],
   setup (props, { emit }) {
     const active = useActiveCategory()
-    const categories = [
-      {
-        text: 'Population'
-      },
-      {
-        text: '2022 Peak Pubs.'
-      },
-      {
-        text: 'Ratio, 1 Publisher to'
-      },
-      {
-        text: '2022 Av. Pubs.'
-      },
-      {
-        text: '% Inc. Over 2021'
-      },
-      {
-        text: '2022 No. Bptzd.'
-      },
-      {
-        text: 'Av. Pio. Pubs.'
-      },
-      {
-        text: 'No. of Congs.'
-      },
-      {
-        text: 'Av. Bible Studies'
-      },
-      {
-        text: 'Memorial Attendance'
-      }
-    ]
+    const year = useActiveYear()
+    const t = useI18n().t
+
+    const categoriesList = ['population', 'peak_pubs', 'ratio_1_publisher_to', 'av_pubs', 'inc_over', 'no_bptzd', 'av_pio_pubs', 'no_of_congs', 'av_bible_studies', 'memorial_attendance']
+    const categories = computed(() => {
+      return categoriesList.map(category => {
+        return {
+          value: category,
+          text: t('categories.' + category, { year: year.value, lastYear: year.value - 1 })
+        }
+      })
+    })
 
     return {
       active,
+      year,
       categories
     }
   }

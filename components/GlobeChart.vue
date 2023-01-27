@@ -8,21 +8,24 @@ import * as d3 from 'd3'
 import { computed, onMounted } from '@vue/runtime-core'
 import { WorldCountry } from '~/types/WorldCountry'
 import { curveBumpY } from 'd3'
+import { useSettingsTheme } from '~/composables/states'
+import { ReportEntry } from '~/types/ReportEntry'
 
 export default defineComponent({
   name: 'GlobeChart',
   props: {
-    year: String,
-    sizeKey: { type: String, required: true },
+    year: Number,
+    category: { type: String, required: true },
     theme: {
       type: String,
-      default: 'dark',
+      default: 'dark'
     }
   },
   setup (props) {
+    const theme = useSettingsTheme()
     const globeDiv = ref()
     const worldCountries = ref<WorldCountry[]>([])
-    const countriesData = ref<any[]>([])
+    const reportData = ref<ReportEntry[]>([])
     const globe = ref<GlobeInstance>()
     const mapCountries = {
       'Antigua': 'Antigua and Barbuda',
@@ -33,15 +36,19 @@ export default defineComponent({
     const globeData = computed(() => {
       unknownCountries = []
 
-      return countriesData.value.reduce((acc, country) => {
+      return reportData.value.reduce((acc, entry) => {
+        if (!entry[props.category]) {
+          return acc
+        }
+
         const countryData = worldCountries.value.find((d) => {
-          const rightName = mapCountries[country['Country or Territory']] || country['Country or Territory']
+          const rightName = mapCountries[entry.country_or_territory] || entry.country_or_territory
           return d.country === rightName
         })
-        const size = +country[props.sizeKey].replaceAll(',', '') || 0
+        const size = +entry[props.category].replaceAll(',', '') || 0
 
         if (!countryData) {
-          unknownCountries.push(country['Country or Territory'])
+          unknownCountries.push(entry.country_or_territory)
           return acc
         }
 
@@ -60,13 +67,22 @@ export default defineComponent({
     const max = computed(() => d3.max(globeData.value, (d: any) => +d.size))
     const weightColor = computed(() => d3.scaleSequentialSqrt(d3.interpolateYlOrRd).domain([0, max.value]))
 
-    watch(() => props.sizeKey, () => {
+    watch(() => props.category, () => {
       globe.value.pointsData(globeData.value)
+    })
+
+    watch(() => props.year, async () => {
+      reportData.value = (await queryContent('report_' + props.year).findOne()).body as any
+      globe.value.pointsData(globeData.value)
+    })
+
+    watch(() => theme.value, () => {
+      globe.value.globeImageUrl(`/earth-${theme.value}.jpg`)
     })
 
     onMounted(async () => {
       worldCountries.value = (await queryContent('world_countries').findOne()).body as WorldCountry[]
-      countriesData.value = (await queryContent(props.year).findOne()).body as any
+      reportData.value = (await queryContent('report_' + props.year).findOne()).body as any
 
       console.log('found unknown countries', unknownCountries)
 
@@ -75,7 +91,7 @@ export default defineComponent({
       globe.value = Globe()
 
       globe.value(globeDiv.value)
-          .globeImageUrl(`/earth-${props.theme}.jpg`)
+          .globeImageUrl(`/earth-${theme.value}.jpg`)
           .bumpImageUrl('/earth-topology.png')
           .backgroundImageUrl('/night-sky.png')
           // .globeMaterial({ color: '#fff', emissive: '#000', emissiveIntensity: 0.5, specular: '#000', shininess: 1 })
