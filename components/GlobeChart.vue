@@ -16,34 +16,26 @@ export default defineComponent({
   props: {},
   setup (props) {
     const globeDiv = ref()
-    const worldCountries = ref<WorldCountry[]>([])
     const globe = ref<GlobeInstance>()
     const mainStore = useMainStore()
     let countryPolygons: { bbox: string, type: string, features: any[] } | null = null
-    const mapCountries = {
-      'Antigua': 'Antigua and Barbuda',
-      'United States of America': 'United States'
-    }
-    let unknownCountries = []
 
+    const worldCountries = computed(() => mainStore.worldCountries)
     const globeData = computed(() => {
-      unknownCountries = []
-
       return mainStore.activeReport.reduce((acc, entry) => {
         if (!entry[mainStore.activeCategory]) {
           return acc
         }
 
         const countryData = worldCountries.value.find((d) => {
-          const rightName = mapCountries[entry.country_or_territory] || entry.country_or_territory
-          return d.country === rightName
+          return d.names.includes(entry.country_or_territory)
         })
-        const size = +entry[mainStore.activeCategory].replaceAll(',', '') || 0
 
-        if (!countryData) {
-          unknownCountries.push(entry.country_or_territory)
+        if(!countryData){
           return acc
         }
+
+        const size = +entry[mainStore.activeCategory].replaceAll(',', '') || 0
 
         acc.push({
           lat: +countryData.latitude,
@@ -75,8 +67,6 @@ export default defineComponent({
 
     watch(() => mainStore.activeCountryData, (value) => {
       if (value) {
-        // Center the map on the selected country.
-        // TODO:: higlhight the country on the map or show a label
         globe.value.pointOfView({
           lat: +value.latitude,
           lng: +value.longitude,
@@ -85,6 +75,10 @@ export default defineComponent({
 
         addCountryPolygons()
       }
+    })
+
+    watch(() => globeData.value, () => {
+      globe.value.pointsData(globeData.value)
     })
 
     function addGlobeClouds () {
@@ -123,12 +117,7 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      worldCountries.value = (await queryContent('world_countries').findOne()).body as WorldCountry[]
       mainStore.setActiveReport((await queryContent('report_' + mainStore.activeYear).findOne()).body as any)
-
-      console.log('found unknown countries', unknownCountries)
-
-      // console.table(globeData.value)
 
       globe.value = Globe()
 
@@ -138,7 +127,7 @@ export default defineComponent({
           .backgroundImageUrl('/night-sky-3.jpeg')
           // .globeMaterial({ color: '#fff', emissive: '#000', emissiveIntensity: 0.5, specular: '#000', shininess: 1 })
           .showAtmosphere(true)
-          .pointsData(globeData.value)
+          .pointLabel('ciao')
           // .pointAltitude("size")
           .pointAltitude((d: any) => d.size * +`1e-${(max.value.toString().length - 1)}`)
           .pointColor((d: any) => weightColor.value(d.size))

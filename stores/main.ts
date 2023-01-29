@@ -62,6 +62,7 @@ export const useMainStore = defineStore('main', () => {
     activeCountryReportData,
     availableYears,
     showCountryDetails,
+    worldCountries,
     setActiveCountry,
     setActiveReport,
     updateCountryDetailsModalState
