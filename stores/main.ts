@@ -32,7 +32,8 @@ export const useMainStore = defineStore('main', () => {
       const countryData = worldCountries.value.find((c) => c.names.includes(country))
       const name = kebabCase(countryData?.country || country)
       const reports = (await queryContent('/percountryreports/' + name).findOne()) as any
-      
+  
+      activeCountry.value = countryData?.country || country
       activeCountryData.value = countryData ?? null
       activeCountryReportData.value = reports
     }

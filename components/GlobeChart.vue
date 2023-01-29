@@ -3,21 +3,21 @@
 </template>
 
 <script lang="ts">
+import { useFormatters } from '~/composables/formatters'
 import Globe, { GlobeInstance } from 'globe.gl'
 import * as d3 from 'd3'
-import { computed, onMounted } from '@vue/runtime-core'
-import { WorldCountry } from '~/types/WorldCountry'
-import { ReportEntry } from '~/types/ReportEntry'
-import { useMainStore } from '~/stores/main'
 import * as THREE from 'three'
+import { computed, onMounted } from '@vue/runtime-core'
+import { useMainStore } from '~/stores/main'
 
 export default defineComponent({
   name: 'GlobeChart',
   props: {},
   setup (props) {
+    const formatters = useFormatters()
+    const mainStore = useMainStore()
     const globeDiv = ref()
     const globe = ref<GlobeInstance>()
-    const mainStore = useMainStore()
     let countryPolygons: { bbox: string, type: string, features: any[] } | null = null
 
     const worldCountries = computed(() => mainStore.worldCountries)
@@ -31,16 +31,23 @@ export default defineComponent({
           return d.names.includes(entry.country_or_territory)
         })
 
-        if(!countryData){
+        if (!countryData) {
           return acc
         }
 
         const size = +entry[mainStore.activeCategory].replaceAll(',', '') || 0
 
+        let value = formatters.formatNumber(size)
+
+        if (mainStore.activeCategory === 'inc_over') {
+          value = `${value}%`
+        }
+
         acc.push({
           lat: +countryData.latitude,
           lng: +countryData.longitude,
-          name: countryData.country + `(${size})`,
+          name: countryData.country + `(${value})`,
+          country: countryData.country,
           size
         })
 
@@ -127,10 +134,16 @@ export default defineComponent({
           .backgroundImageUrl('/night-sky-3.jpeg')
           // .globeMaterial({ color: '#fff', emissive: '#000', emissiveIntensity: 0.5, specular: '#000', shininess: 1 })
           .showAtmosphere(true)
-          .pointLabel('ciao')
           // .pointAltitude("size")
           .pointAltitude((d: any) => d.size * +`1e-${(max.value.toString().length - 1)}`)
           .pointColor((d: any) => weightColor.value(d.size))
+          .onPointClick((d: any) => {
+            mainStore.setActiveCountry(d.country)
+
+            setTimeout(() => {
+              mainStore.updateCountryDetailsModalState(true)
+            }, 1000)
+          })
 
       addGlobeClouds()
 

@@ -16,13 +16,13 @@ export default defineComponent({
     const store = useMainStore()
     let chartInstance = null
 
-    const years = computed(() => Object.keys(store.activeCountryReportData).reduce((acc, key) => {
+    const years = computed(() => store.activeCountryReportData ? Object.keys(store.activeCountryReportData).reduce((acc, key) => {
       if (key.match(/[0-9]{4}/)) {
         acc.push(key)
       }
 
       return acc
-    }, []))
+    }, []) : [])
 
     const data = computed(() => years.value.map(year => store.activeCountryReportData[year][store.activeCategory]))
 
