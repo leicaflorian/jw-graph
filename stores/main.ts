@@ -38,6 +38,10 @@ export const useMainStore = defineStore('main', () => {
     }
   }
   
+  function setActiveReport (report: ReportEntry[]) {
+    activeReport.value = report
+  }
+  
   function updateCountryDetailsModalState (status: boolean) {
     showCountryDetails.value = status
   }
@@ -59,6 +63,7 @@ export const useMainStore = defineStore('main', () => {
     availableYears,
     showCountryDetails,
     setActiveCountry,
+    setActiveReport,
     updateCountryDetailsModalState
   }
 })
