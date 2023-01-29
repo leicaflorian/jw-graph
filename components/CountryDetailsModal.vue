@@ -3,12 +3,13 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Details of {{ countryData.country}}</h5>
+          <h5 class="modal-title">Details of {{ countryData?.country }}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
-          //TODO:: chart of country data.
+          <ChartBars ></ChartBars>
+
         </div>
 
         <!--        <div class="modal-footer">
@@ -35,6 +36,18 @@ export default defineComponent({
     const countryData = computed(() => store.activeCountryData)
     const reportData = computed(() => store.activeCountryReportData)
 
+    function initialize () {
+      if (modalInstance) {
+        return
+      }
+
+      modalInstance = new Modal(modal.value, {})
+
+      modal.value.addEventListener('hidden.bs.modal', event => {
+        store.updateCountryDetailsModalState(false)
+      })
+    }
+
     watch(() => store.showCountryDetails, (state) => {
       if (state) {
         modalInstance.show()
@@ -42,11 +55,11 @@ export default defineComponent({
     })
 
     onMounted(() => {
-      modalInstance = new Modal(modal.value, {})
+      initialize()
 
-      modal.value.addEventListener('hidden.bs.modal', event => {
-        store.updateCountryDetailsModalState(false)
-      })
+      if (store.showCountryDetails) {
+        modalInstance.show()
+      }
     })
 
     return {

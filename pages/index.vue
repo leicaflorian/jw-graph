@@ -13,24 +13,28 @@
 
   <Timeline></Timeline>
 
-  <CountryDetailsModal></CountryDetailsModal>
+  <CountryDetailsModal v-if="store.showCountryDetails"></CountryDetailsModal>
 </template>
 
 <script lang="ts">
 import CountriesList from '~/components/CountriesList.vue'
 import { onMounted } from '@vue/runtime-core'
 import CountryDetailsModal from '~/components/CountryDetailsModal.vue'
+import { useMainStore } from '~/stores/main'
 
 export default defineComponent({
   name: 'Index',
   components: { CountryDetailsModal, CountriesList },
   setup (props) {
+    const store = useMainStore()
 
     onMounted(async () => {
 
     })
 
-    return {}
+    return {
+      store
+    }
   }
 })
 </script>

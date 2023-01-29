@@ -47,8 +47,12 @@ export default defineComponent({
       store.setActiveCountry(country.country_or_territory)
     }
 
-    function onValueClick () {
-      store.updateCountryDetailsModalState(true)
+    function onValueClick (country) {
+      store.setActiveCountry(country.country_or_territory)
+
+      setTimeout(() => {
+        store.updateCountryDetailsModalState(true)
+      }, 1000)
     }
 
     return {
